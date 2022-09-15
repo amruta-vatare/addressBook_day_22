@@ -42,9 +42,15 @@ public class AddressBookMain {
             choice = sc.nextInt();
             switch (choice){
                 case 1:
-                    Person p = main.createContact();
-                    main.addToContactList(p);
-                    main.addToAddressBook(main.contact);
+                    Scanner scanner = new Scanner(System.in);
+                    System.out.println("Enter how many contacts you want to add");
+                    int count = sc.nextInt();
+                    for(int i = 1;i<=count;i++){
+                        System.out.println("Enter details for "+i+" person");
+                        Person p = main.createContact();
+                        main.addToContactList(p);
+                    }
+                        main.addToAddressBook(main.contact);
                     break;
                 case 2:
                     main.editContact();
@@ -105,11 +111,6 @@ public class AddressBookMain {
     private void addToContactList(Person p){
         Scanner sc = new Scanner(System.in);
         contact.add(p);
-        System.out.println("Press 1 to add more contact");
-        int add = sc.nextInt();
-        if(add == 1){;
-        addToContactList(createContact());
-        }
     }
 
     private void addToAddressBook(List<Person> personList) {
