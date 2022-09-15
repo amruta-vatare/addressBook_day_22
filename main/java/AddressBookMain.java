@@ -63,6 +63,16 @@ public class AddressBookMain {
     }
 
     private void deleteContact() {
+        Scanner sc = new Scanner(System.in);
+        display();
+        System.out.println("Enter the name of which you want to delete contact");
+        String name = sc.next();
+        for (Person p :contact) {
+            if(p.getFirstName().equals(name)){
+                contact.remove(p);
+            }
+        }
+
     }
 
     private void editContact() {
@@ -97,7 +107,9 @@ public class AddressBookMain {
         contact.add(p);
         System.out.println("Press 1 to add more contact");
         int add = sc.nextInt();
-        if(add == 1){createContact();}
+        if(add == 1){;
+        addToContactList(createContact());
+        }
     }
 
     private void addToAddressBook(List<Person> personList) {
