@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Person {
     private String firstName;
     private String lastName;
@@ -95,5 +97,18 @@ public class Person {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", emailId='" + emailId + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(city, person.city) && Objects.equals(state, person.state) && Objects.equals(zipCode, person.zipCode) && Objects.equals(phoneNumber, person.phoneNumber) && Objects.equals(emailId, person.emailId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, address, city, state, zipCode, phoneNumber, emailId);
     }
 }

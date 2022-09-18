@@ -3,9 +3,18 @@ import java.util.List;
 
 public class AddressBook {
     private List<Person> contactList;
+    private String name;
     public AddressBook(){
-        contactList = new ArrayList<>();
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<Person> getContactList() {
         return contactList;
     }
