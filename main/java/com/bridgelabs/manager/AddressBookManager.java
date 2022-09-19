@@ -38,6 +38,9 @@ public class AddressBookManager implements IAddressBookManager {
             case 4:
                 getContactsByCity();
                 break;
+            case 5:
+                getContactsByState();
+                break;
             default:
                 break;
         }
@@ -49,6 +52,7 @@ public class AddressBookManager implements IAddressBookManager {
         System.out.println("2. Delete Address Book");
         System.out.println("3. Display Address Books");
         System.out.println("4. Search Contacts By City");
+        System.out.println("5. No of Contacts in state");
         System.out.println("Press 0 to exit");
     }
 
@@ -109,8 +113,6 @@ public class AddressBookManager implements IAddressBookManager {
     public void getContactsByCity() {
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the name of city");
-        String city = scanner.next();
         for (AddressBook addressBook: addressBookService.getAll()) {
             System.out.println("----------------------------------------");
             System.out.println("Address book " + addressBook.getName());
@@ -118,8 +120,22 @@ public class AddressBookManager implements IAddressBookManager {
             contactRepository.addAll(addressBook.getContactList());
             IContactService contactService = new ContactService(contactRepository);
             ContactManager contactManager = new ContactManager(contactService);
-            contactManager.getContactByCity(city);
-            System.out.println("----------------------------------------");
+            contactManager.getContactByCity();
         }
     }
+
+    @Override
+    public void getContactsByState() {
+        Scanner scanner = new Scanner(System.in);
+        for (AddressBook addressBook: addressBookService.getAll()) {
+            System.out.println("----------------------------------------");
+            System.out.println("Address book " + addressBook.getName());
+            ContactRepository contactRepository = new ContactRepository();
+            contactRepository.addAll(addressBook.getContactList());
+            IContactService contactService = new ContactService(contactRepository);
+            ContactManager contactManager = new ContactManager(contactService);
+            contactManager.getContactsByState();
+        }
+    }
+
 }

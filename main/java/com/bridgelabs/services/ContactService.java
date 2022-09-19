@@ -4,6 +4,8 @@ import com.bridgelabs.models.Person;
 import com.bridgelabs.repository.ContactRepository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ContactService implements IContactService {
     ContactRepository contactRepository;
@@ -60,8 +62,16 @@ public class ContactService implements IContactService {
     }
 
     @Override
-    public List<Person> getContactByCity(String name){
-        List<Person> personListByCity = contactRepository.stream().filter((person)->person.getCity().equals(name)).toList();
-        return personListByCity;
+    public Map<String, List<Person>> getContactByCity(){
+        Map<String, List<Person>> contactsByCity=
+                contactRepository.stream().collect(Collectors.groupingBy(Person::getCity));
+        return contactsByCity;
+    }
+
+    @Override
+    public Map<String, Long> getContactsByState() {
+        Map<String, Long> cityAndNoOfContacts =
+                contactRepository.stream().collect(Collectors.groupingBy(Person::getState, Collectors.counting()));
+        return cityAndNoOfContacts;
     }
 }

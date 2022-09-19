@@ -12,4 +12,5 @@ public interface IAddressBookManager {
     void display();
     void delete();
     void getContactsByCity();
+    void getContactsByState();
 }

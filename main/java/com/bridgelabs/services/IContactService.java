@@ -3,6 +3,7 @@ package com.bridgelabs.services;
 import com.bridgelabs.models.Person;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IContactService {
     void add(Person person);
@@ -10,5 +11,6 @@ public interface IContactService {
     boolean delete(String name);
     boolean edit(String name, Person person);
     List<Person> getAll();
-    List<Person> getContactByCity(String name);
+    Map<String, List<Person>> getContactByCity();
+    Map<String,Long> getContactsByState();
 }

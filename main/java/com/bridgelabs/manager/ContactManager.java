@@ -4,7 +4,9 @@ import com.bridgelabs.models.Person;
 import com.bridgelabs.services.IContactService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 public class ContactManager implements IContactManager {
     IContactService contactService;
@@ -34,9 +36,7 @@ public class ContactManager implements IContactManager {
                 display();
                 break;
             case 5:
-                System.out.println("Enter city name");
-                Scanner sc = new Scanner(System.in);
-                getContactByCity(sc.next());
+                getContactByCity();
                 break;
             default:
                 break;
@@ -110,10 +110,34 @@ public class ContactManager implements IContactManager {
         return p;
     }
 
-    public void getContactByCity(String city){
-        List<Person> personListByCity = contactService.getContactByCity(city);
-        for (Person p :personListByCity) {
-            System.out.println(p.toString());
+    public void getContactByCity(){
+        Map<String, List<Person>> personListByCity = contactService.getContactByCity();
+        Set<Map.Entry<String, List<Person>>> entrySet = personListByCity.entrySet();
+        for (Map.Entry<String, List<Person>> entry : entrySet)
+        {
+            System.out.println("--------------------------------------");
+
+            System.out.println("Contacts In "+entry.getKey() + " : ");
+
+            List<Person> list = entry.getValue();
+
+            for (Person person : list)
+            {
+                System.out.println(person.getFirstName()+" "+person.getLastName() );
+            }
+            System.out.println("--------------------------------------");
+        }
+    }
+    public void getContactsByState(){
+        Map<String, Long> ContactsByState = contactService.getContactsByState();
+        Set<Map.Entry<String, Long>> entrySet = ContactsByState.entrySet();
+        for (Map.Entry<String, Long> entry : entrySet)
+        {
+            System.out.println("--------------------------------------");
+
+            System.out.println("Contacts In "+entry.getKey() + " : "+entry.getValue());
+
+            System.out.println("--------------------------------------");
         }
     }
 }
