@@ -1,3 +1,5 @@
+package com.bridgelabs.models;
+
 import java.util.Objects;
 
 public class Person {
@@ -87,7 +89,7 @@ public class Person {
 
     @Override
     public String toString() {
-        return "Person{" +
+        return "com.bridgelabs.models.Person{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", address='" + address + '\'' +

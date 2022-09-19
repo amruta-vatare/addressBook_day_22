@@ -1,9 +1,15 @@
+package com.bridgelabs.manager;
+
+import com.bridgelabs.models.Person;
+import com.bridgelabs.services.IContactService;
+
+import java.util.List;
 import java.util.Scanner;
 
-public class AddressBookManager implements IAddressBookManager {
-    IAddressBookService addressBookService;
-    public AddressBookManager(IAddressBookService addressBookService) {
-        this.addressBookService = addressBookService;
+public class ContactManager implements IContactManager {
+    IContactService contactService;
+    public ContactManager(IContactService contactService) {
+        this.contactService = contactService;
     }
     @Override
     public int chooseOptions() {
@@ -27,6 +33,11 @@ public class AddressBookManager implements IAddressBookManager {
             case 4:
                 display();
                 break;
+            case 5:
+                System.out.println("Enter city name");
+                Scanner sc = new Scanner(System.in);
+                getContactByCity(sc.next());
+                break;
             default:
                 break;
         }
@@ -37,6 +48,7 @@ public class AddressBookManager implements IAddressBookManager {
         System.out.println("2. Edit Contact");
         System.out.println("3. Delete Contact");
         System.out.println("4. Display Contact");
+        System.out.println("5. Display Contact by city");
         System.out.println("Press 0 to exit");
     }
     @Override
@@ -47,7 +59,7 @@ public class AddressBookManager implements IAddressBookManager {
         for(int i = 1;i<=count;i++){
             System.out.println("Enter contact "+i+" details");
             Person person =  getContactDetails();
-            addressBookService.add(person);
+            contactService.add(person);
             System.out.println("Added successfully");
         }
     }
@@ -57,7 +69,7 @@ public class AddressBookManager implements IAddressBookManager {
         System.out.println("Enter first name which you want to update contact");
         String firstName = scanner.next();
         Person updatedContact = getContactDetails();
-        addressBookService.edit(firstName,updatedContact);
+        contactService.edit(firstName,updatedContact);
         System.out.println("Updated successfully");
 
     }
@@ -66,13 +78,13 @@ public class AddressBookManager implements IAddressBookManager {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter first name which you want to delete contact");
         String dFirstName = scanner.next();
-        addressBookService.delete(dFirstName);
+        contactService.delete(dFirstName);
         System.out.println("Deleted successfully");
     }
     @Override
     public void display(){
         System.out.println("All Contacts");
-        for (Person person: addressBookService.getAll()) {
+        for (Person person: contactService.getAll()) {
             System.out.println(person);
         }
     }
@@ -96,5 +108,12 @@ public class AddressBookManager implements IAddressBookManager {
         String email = scanner.next();
         Person p = new Person(fName,lName,address,city,state,zipCode,phoneNo,email);
         return p;
+    }
+
+    public void getContactByCity(String city){
+        List<Person> personListByCity = contactService.getContactByCity(city);
+        for (Person p :personListByCity) {
+            System.out.println(p.toString());
+        }
     }
 }

@@ -1,19 +1,24 @@
+package com.bridgelabs.services;
+
+import com.bridgelabs.models.Person;
+import com.bridgelabs.repository.ContactRepository;
+
 import java.util.List;
 
-public class AddressBookService implements IAddressBookService{
-    AddressBookRepository addressBookRepository;
-    AddressBookService(AddressBookRepository addressBookRepository){
-        this.addressBookRepository = addressBookRepository;
+public class ContactService implements IContactService {
+    ContactRepository contactRepository;
+    public ContactService(ContactRepository contactRepository){
+        this.contactRepository = contactRepository;
     }
 
     @Override
     public void add(Person person) {
-        addressBookRepository.add(person);
+        contactRepository.add(person);
     }
 
     @Override
     public Person get(String firstName) {
-        for (Person person: addressBookRepository) {
+        for (Person person: contactRepository) {
             if(person.getFirstName().equals(firstName)){
                 return person;
             }
@@ -23,9 +28,9 @@ public class AddressBookService implements IAddressBookService{
 
     @Override
     public boolean delete(String firstName) {
-        for (Person person:addressBookRepository) {
+        for (Person person: contactRepository) {
             if(person.getFirstName().equals(firstName)){
-                addressBookRepository.remove(person);
+                contactRepository.remove(person);
                 return true;
             }
         }
@@ -51,6 +56,12 @@ public class AddressBookService implements IAddressBookService{
 
     @Override
     public List<Person> getAll() {
-        return addressBookRepository;
+        return contactRepository;
+    }
+
+    @Override
+    public List<Person> getContactByCity(String name){
+        List<Person> personListByCity = contactRepository.stream().filter((person)->person.getCity().equals(name)).toList();
+        return personListByCity;
     }
 }
