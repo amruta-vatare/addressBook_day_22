@@ -2,11 +2,18 @@ package com.bridgelabs.manager;
 
 import com.bridgelabs.models.Person;
 import com.bridgelabs.services.IContactService;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.COMMA;
 
 public class ContactManager implements IContactManager {
     IContactService contactService;
@@ -52,17 +59,35 @@ public class ContactManager implements IContactManager {
         System.out.println("Press 0 to exit");
     }
     @Override
-    public void add(){
+    public void add() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter how many contacts you want to add");
         int count = scanner.nextInt();
         for(int i = 1;i<=count;i++){
             System.out.println("Enter contact "+i+" details");
             Person person =  getContactDetails();
-            contactService.add(person);
+            List<Person> personsContact;
+            //UC14 Write
+            try{
+                FileWriter writer = new FileWriter("C:\\Users\\Amruta\\BridgeLabsProjects\\Persons.csv");
+                // Creating StatefulBeanToCsv object
+                StatefulBeanToCsvBuilder<Person> builder= new StatefulBeanToCsvBuilder<>(writer);
+                StatefulBeanToCsv beanWriter = builder.build();
+                contactService.add(person);
+                personsContact = contactService.getAll();
+                // Write list to StatefulBeanToCsv object
+                beanWriter.write(personsContact);
+
+                // closing the writer object
+                writer.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             System.out.println("Added successfully");
         }
+
     }
+
     @Override
     public void update(){
         Scanner scanner = new Scanner(System.in);
@@ -83,9 +108,14 @@ public class ContactManager implements IContactManager {
     }
     @Override
     public void display(){
-        System.out.println("All Contacts");
+        /*System.out.println("All Contacts");
         for (Person person: contactService.getAll()) {
             System.out.println(person);
+        }*/
+        System.out.println("DisplayFrom CSV");
+        List<Person> personByCSVFile = processInputFile();
+        for (Person p:personByCSVFile) {
+            System.out.println(p);
         }
     }
     private Person getContactDetails() {
@@ -109,7 +139,7 @@ public class ContactManager implements IContactManager {
         Person p = new Person(fName,lName,address,city,state,zipCode,phoneNo,email);
         return p;
     }
-
+    //UC9
     public void getContactByCity(){
         Map<String, List<Person>> personListByCity = contactService.getContactByCity();
         Set<Map.Entry<String, List<Person>>> entrySet = personListByCity.entrySet();
@@ -128,6 +158,7 @@ public class ContactManager implements IContactManager {
             System.out.println("--------------------------------------");
         }
     }
+    //UC10
     public void getContactsByState(){
         Map<String, Long> ContactsByState = contactService.getContactsByState();
         Set<Map.Entry<String, Long>> entrySet = ContactsByState.entrySet();
@@ -140,4 +171,33 @@ public class ContactManager implements IContactManager {
             System.out.println("--------------------------------------");
         }
     }
+    //UC13 UC14Read
+    public List<Person> processInputFile(){
+        List<Person> inputList = new ArrayList<Person>();
+        try{
+            File inputF = new File("C:\\Users\\Amruta\\BridgeLabsProjects\\Persons.csv");
+            InputStream inputFS = new FileInputStream(inputF);
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputFS));
+            // skip the header of the csv
+            inputList = br.lines().skip(1).map(mapToItem).collect(Collectors.toList());
+            br.close();
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        }
+        return inputList ;
+    }
+    private Function<String, Person> mapToItem = (line) -> {
+        String[] p = line.split("[,]");// a CSV has comma separated lines
+        Person item = new Person();
+        item.setFirstName(p[0]);//<-- this is the first column in the csv file
+        item.setLastName(p[1]);
+        item.setAddress(p[2]);
+        item.setCity(p[3]);
+        item.setState(p[4]);
+        item.setZipCode(p[5]);
+        item.setPhoneNumber(p[6]);
+        item.setEmailId(p[7]);
+        //more initialization goes here
+        return item;
+    };
 }

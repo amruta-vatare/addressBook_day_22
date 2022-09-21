@@ -7,6 +7,7 @@ import com.bridgelabs.services.IAddressBookService;
 public class AddressBookMain {
     static AddressBookRepository addressBookRepository = new AddressBookRepository();
     public static void main(String[] args) {
+
         IAddressBookService addressBookService = new AddressBookService(addressBookRepository);
         IAddressBookManager addressBookManager = new AddressBookManager(addressBookService);
 

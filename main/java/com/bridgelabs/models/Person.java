@@ -1,16 +1,29 @@
 package com.bridgelabs.models;
 
+import com.opencsv.bean.CsvBindByName;
+
 import java.util.Objects;
 
 public class Person {
+    @CsvBindByName(column = "firstName")
     private String firstName;
+    @CsvBindByName(column = "lastName")
     private String lastName;
+    @CsvBindByName(column = "address")
     private String address;
+    @CsvBindByName(column = "city")
     private String city;
+    @CsvBindByName(column = "state")
     private String state;
+    @CsvBindByName(column = "zipCode")
     private String zipCode;
+    @CsvBindByName(column = "phoneNo")
     private String phoneNumber;
+    @CsvBindByName(column = "email_id")
     private String emailId;
+    public Person(){
+
+    }
 
     public Person(String firstName, String lastName, String address, String city, String state, String zipCode, String phoneNumber, String emailId) {
         this.firstName = firstName;
