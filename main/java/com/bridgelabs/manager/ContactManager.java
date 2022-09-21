@@ -69,13 +69,14 @@ public class ContactManager implements IContactManager {
             List<Person> personsContact;
             //UC14 Write
             try{
-                FileWriter writer = new FileWriter("C:\\Users\\Amruta\\BridgeLabsProjects\\Persons.csv");
+                FileWriter writer = new FileWriter("C:\\Users\\Amruta\\BridgeLabsProjects\\Persons.csv",true);
                 // Creating StatefulBeanToCsv object
                 StatefulBeanToCsvBuilder<Person> builder= new StatefulBeanToCsvBuilder<>(writer);
                 StatefulBeanToCsv beanWriter = builder.build();
                 contactService.add(person);
                 personsContact = contactService.getAll();
                 // Write list to StatefulBeanToCsv object
+                beanWriter.writerNext()
                 beanWriter.write(personsContact);
 
                 // closing the writer object
