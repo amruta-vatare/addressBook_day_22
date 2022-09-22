@@ -2,21 +2,21 @@ package com.bridgelabs.manager;
 
 import com.bridgelabs.models.Person;
 import com.bridgelabs.services.IContactService;
-import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-
+import static java.nio.file.StandardOpenOption.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.COMMA;
-
 public class ContactManager implements IContactManager {
     IContactService contactService;
+    List<Person> personsContact;
     public ContactManager(IContactService contactService) {
         this.contactService = contactService;
     }
@@ -66,24 +66,9 @@ public class ContactManager implements IContactManager {
         for(int i = 1;i<=count;i++){
             System.out.println("Enter contact "+i+" details");
             Person person =  getContactDetails();
-            List<Person> personsContact;
-            //UC14 Write
-            try{
-                FileWriter writer = new FileWriter("C:\\Users\\Amruta\\BridgeLabsProjects\\Persons.csv",true);
-                // Creating StatefulBeanToCsv object
-                StatefulBeanToCsvBuilder<Person> builder= new StatefulBeanToCsvBuilder<>(writer);
-                StatefulBeanToCsv beanWriter = builder.build();
-                contactService.add(person);
-                personsContact = contactService.getAll();
-                // Write list to StatefulBeanToCsv object
-                beanWriter.writerNext()
-                beanWriter.write(personsContact);
-
-                // closing the writer object
-                writer.close();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            contactService.add(person);
+            processOutputCSVFile();
+            processOutputJsonFile();
             System.out.println("Added successfully");
         }
 
@@ -114,10 +99,12 @@ public class ContactManager implements IContactManager {
             System.out.println(person);
         }*/
         System.out.println("DisplayFrom CSV");
-        List<Person> personByCSVFile = processInputFile();
+        List<Person> personByCSVFile = processInputCSVFile();
         for (Person p:personByCSVFile) {
             System.out.println(p);
         }
+        System.out.println("Display from JSON File");
+        processInputJsonFile();
     }
     private Person getContactDetails() {
         Scanner scanner = new Scanner(System.in);
@@ -172,8 +159,55 @@ public class ContactManager implements IContactManager {
             System.out.println("--------------------------------------");
         }
     }
+    //UC15
+    private void processInputJsonFile(){
+        Gson gson = new Gson();
+        try{
+            Person person = gson.fromJson(new FileReader("C:\\Users\\Amruta\\BridgeLabsProjects\\xyz.json"), Person.class);
+            System.out.println("form json file"+person);
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+    //UC15
+    private void processOutputJsonFile(){
+        List<Person> personList = contactService.getAll();
+        System.out.println("String representation of contactsList");
+        System.out.println("toJson() String"+new Gson().toJson(personList));
+        String personListStr = new Gson().toJson(personList);
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (Person p:personList) {
+            Path path = Path.of("C:\\Users\\Amruta\\BridgeLabsProjects\\xyz.json");
+            try {
+                String objectStr = objectMapper.writeValueAsString(p);
+                System.out.println("ObjectMapper String"+objectStr);
+                Files.writeString(path,objectStr, APPEND);
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    //UC14 Write
+    private void processOutputCSVFile(){
+        try{
+            FileWriter writer = new FileWriter("C:\\Users\\Amruta\\BridgeLabsProjects\\Persons.csv",true);
+            // Creating StatefulBeanToCsv object
+            StatefulBeanToCsvBuilder<Person> builder= new StatefulBeanToCsvBuilder<>(writer);
+            StatefulBeanToCsv beanWriter = builder.build();
+            personsContact = contactService.getAll();
+            // Write list to StatefulBeanToCsv object
+            beanWriter.write(personsContact);
+            // closing the writer object
+            writer.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     //UC13 UC14Read
-    public List<Person> processInputFile(){
+    public List<Person> processInputCSVFile(){
         List<Person> inputList = new ArrayList<Person>();
         try{
             File inputF = new File("C:\\Users\\Amruta\\BridgeLabsProjects\\Persons.csv");
@@ -190,14 +224,14 @@ public class ContactManager implements IContactManager {
     private Function<String, Person> mapToItem = (line) -> {
         String[] p = line.split("[,]");// a CSV has comma separated lines
         Person item = new Person();
-        item.setFirstName(p[0]);//<-- this is the first column in the csv file
-        item.setLastName(p[1]);
-        item.setAddress(p[2]);
-        item.setCity(p[3]);
-        item.setState(p[4]);
-        item.setZipCode(p[5]);
-        item.setPhoneNumber(p[6]);
-        item.setEmailId(p[7]);
+        item.setFirstName(p[3]);//<-- this is the first column in the csv file
+        item.setLastName(p[4]);
+        item.setAddress(p[0]);
+        item.setCity(p[1]);
+        item.setState(p[6]);
+        item.setZipCode(p[7]);
+        item.setPhoneNumber(p[5]);
+        item.setEmailId(p[2]);
         //more initialization goes here
         return item;
     };
