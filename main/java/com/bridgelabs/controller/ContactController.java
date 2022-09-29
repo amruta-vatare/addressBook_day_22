@@ -1,4 +1,4 @@
-package com.bridgelabs.manager;
+package com.bridgelabs.controller;
 
 import com.bridgelabs.models.Person;
 import com.bridgelabs.services.IContactService;
@@ -10,14 +10,13 @@ import static java.nio.file.StandardOpenOption.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-public class ContactManager implements IContactManager {
+public class ContactController implements IContactController {
     IContactService contactService;
     List<Person> personsContact;
-    public ContactManager(IContactService contactService) {
+    public ContactController(IContactService contactService) {
         this.contactService = contactService;
     }
     @Override
@@ -37,7 +36,7 @@ public class ContactManager implements IContactManager {
                 update();
                 break;
             case 3:
-                delete();
+               delete();
                 break;
             case 4:
                 display();
@@ -66,46 +65,46 @@ public class ContactManager implements IContactManager {
         for(int i = 1;i<=count;i++){
             System.out.println("Enter contact "+i+" details");
             Person person =  getContactDetails();
-            contactService.add(person);
-            processOutputCSVFile();
-            processOutputJsonFile();
-            System.out.println("Added successfully");
+            int res = contactService.add(person);
+            //processOutputCSVFile();
+            //processOutputJsonFile();
+            if(res != 0)
+                System.out.println("Added successfully");
         }
 
     }
-
-    @Override
-    public void update(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter first name which you want to update contact");
-        String firstName = scanner.next();
-        Person updatedContact = getContactDetails();
-        contactService.edit(firstName,updatedContact);
-        System.out.println("Updated successfully");
-
-    }
-    @Override
-    public void delete(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter first name which you want to delete contact");
-        String dFirstName = scanner.next();
-        contactService.delete(dFirstName);
-        System.out.println("Deleted successfully");
-    }
     @Override
     public void display(){
-        /*System.out.println("All Contacts");
+        System.out.println("All Contacts");
         for (Person person: contactService.getAll()) {
             System.out.println(person);
-        }*/
-        System.out.println("DisplayFrom CSV");
+        }
+        /*System.out.println("DisplayFrom CSV");
         List<Person> personByCSVFile = processInputCSVFile();
         for (Person p:personByCSVFile) {
             System.out.println(p);
         }
         System.out.println("Display from JSON File");
-        processInputJsonFile();
+        processInputJsonFile();*/
     }
+    @Override
+    public void update(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter email_id which you want to update contact");
+        String email_id = scanner.next();
+        Person updatedContact = getContactDetails();
+        if(contactService.update(email_id,updatedContact))
+            System.out.println("Updated successfully");
+    }
+    @Override
+    public void delete(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter email_Id which you want to delete contact");
+        String email_Id = scanner.next();
+        if(contactService.delete(email_Id))
+            System.out.println("Deleted successfully");
+    }
+
     private Person getContactDetails() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter first name");
@@ -119,9 +118,9 @@ public class ContactManager implements IContactManager {
         System.out.println("Enter state name");
         String state = scanner.next();
         System.out.println("Enter zip code name");
-        String zipCode = scanner.next();
+        int zipCode = scanner.nextInt();
         System.out.println("Enter phone number name");
-        String phoneNo = scanner.next();
+        long phoneNo = scanner.nextLong();
         System.out.println("Enter email name");
         String email = scanner.next();
         Person p = new Person(fName,lName,address,city,state,zipCode,phoneNo,email);
@@ -129,23 +128,17 @@ public class ContactManager implements IContactManager {
     }
     //UC9
     public void getContactByCity(){
-        Map<String, List<Person>> personListByCity = contactService.getContactByCity();
-        Set<Map.Entry<String, List<Person>>> entrySet = personListByCity.entrySet();
-        for (Map.Entry<String, List<Person>> entry : entrySet)
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter city name");
+        String city = sc.next();
+        List<Person> personListByCity = contactService.getContactByCity(city);
+        for (Person person : personListByCity)
         {
-            System.out.println("--------------------------------------");
-
-            System.out.println("Contacts In "+entry.getKey() + " : ");
-
-            List<Person> list = entry.getValue();
-
-            for (Person person : list)
-            {
-                System.out.println(person.getFirstName()+" "+person.getLastName() );
-            }
-            System.out.println("--------------------------------------");
+            System.out.println(person.getFirstName()+" "+person.getLastName() );
         }
+        System.out.println("--------------------------------------");
     }
+    /*
     //UC10
     public void getContactsByState(){
         Map<String, Long> ContactsByState = contactService.getContactsByState();
@@ -158,9 +151,9 @@ public class ContactManager implements IContactManager {
 
             System.out.println("--------------------------------------");
         }
-    }
+    }*/
     //UC15
-    private void processInputJsonFile(){
+    /*private void processInputJsonFile(){
         Gson gson = new Gson();
         try{
             Person person = gson.fromJson(new FileReader("C:\\Users\\Amruta\\BridgeLabsProjects\\xyz.json"), Person.class);
@@ -220,8 +213,8 @@ public class ContactManager implements IContactManager {
         } catch (IOException e) {
         }
         return inputList ;
-    }
-    private Function<String, Person> mapToItem = (line) -> {
+    }*/
+    /*private Function<String, Person> mapToItem = (line) -> {
         String[] p = line.split("[,]");// a CSV has comma separated lines
         Person item = new Person();
         item.setFirstName(p[3]);//<-- this is the first column in the csv file
@@ -234,5 +227,5 @@ public class ContactManager implements IContactManager {
         item.setEmailId(p[2]);
         //more initialization goes here
         return item;
-    };
+    };*/
 }

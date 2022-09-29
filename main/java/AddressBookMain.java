@@ -1,5 +1,5 @@
-import com.bridgelabs.manager.AddressBookManager;
-import com.bridgelabs.manager.IAddressBookManager;
+import com.bridgelabs.controller.AddressBookController;
+import com.bridgelabs.controller.IAddressBookController;
 import com.bridgelabs.repository.AddressBookRepository;
 import com.bridgelabs.services.AddressBookService;
 import com.bridgelabs.services.IAddressBookService;
@@ -9,13 +9,13 @@ public class AddressBookMain {
     public static void main(String[] args) {
 
         IAddressBookService addressBookService = new AddressBookService(addressBookRepository);
-        IAddressBookManager addressBookManager = new AddressBookManager(addressBookService);
+        IAddressBookController addressBookController= new AddressBookController(addressBookService);
 
         int selectedOption;
         do {
-            addressBookManager.displayOptions();
-            selectedOption = addressBookManager.chooseOptions();
-            addressBookManager.invokeOption(selectedOption);
+            addressBookController.displayOptions();
+            selectedOption = addressBookController.chooseOptions();
+            addressBookController.invokeOption(selectedOption);
         }while(selectedOption !=0);
     }
 }

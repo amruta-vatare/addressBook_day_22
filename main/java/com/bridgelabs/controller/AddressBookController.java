@@ -1,17 +1,18 @@
-package com.bridgelabs.manager;
+package com.bridgelabs.controller;
 
 import com.bridgelabs.models.AddressBook;
-import com.bridgelabs.models.Person;
+import com.bridgelabs.models.AddressBookType;
 import com.bridgelabs.repository.ContactRepository;
 import com.bridgelabs.services.ContactService;
 import com.bridgelabs.services.IAddressBookService;
 import com.bridgelabs.services.IContactService;
 
+import java.util.List;
 import java.util.Scanner;
 
-public class AddressBookManager implements IAddressBookManager {
+public class AddressBookController implements IAddressBookController {
     IAddressBookService addressBookService;
-    public AddressBookManager(IAddressBookService addressBookService){
+    public AddressBookController(IAddressBookService addressBookService){
         this.addressBookService = addressBookService;
     }
 
@@ -55,42 +56,46 @@ public class AddressBookManager implements IAddressBookManager {
         System.out.println("5. No of Contacts in state");
         System.out.println("Press 0 to exit");
     }
+    public void chooseType(){
+        List<AddressBookType> types = addressBookService.getTypes();
+        for (int i = 0;i<types.size();i++){
+            System.out.println(i+1+" "+types.get(i).getType_name());
+        }
+    }
 
     @Override
     public void add() {
         AddressBook addressBook = new AddressBook();
         ContactRepository contactRepository = new ContactRepository();
         IContactService contactService = new ContactService(contactRepository);
-        ContactManager contactManager = new ContactManager(contactService);
+        ContactController contactController = new ContactController(contactService);
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter address book name");
         String addressBookName = scanner.next();
         addressBook.setName(addressBookName);
-        addressBook.setContactList(contactRepository);
-        addressBookService.add(addressBook);
-        System.out.println("Address book " + addressBook.getName() + " added successfully");
-        System.out.println("Please choose option below to manage address book '" + addressBook.getName() + "'");
-        int selectedOption;
-        do {
-            contactManager.displayOptions();
-            selectedOption = contactManager.chooseOptions();
-            contactManager.invokeOption(selectedOption);
-        }while(selectedOption !=0);
-        System.out.println("Successfully exited the address book " + addressBook.getName());
+        System.out.println("Choose Type");
+        chooseType();
+        int type = scanner.nextInt();
+        addressBook.setType(type);
+        if(addressBookService.add(addressBook)){
+            System.out.println("Address book " + addressBook.getName() + " added successfully");
+            System.out.println("Please choose option below to manage address book '" + addressBook.getName() + "'");
+            int selectedOption;
+            do {
+                contactController.displayOptions();
+                selectedOption = contactController.chooseOptions();
+                contactController.invokeOption(selectedOption);
+            }while(selectedOption !=0);
+            System.out.println("Successfully exited the address book " + addressBook.getName());
+        }
     }
 
     @Override
     public void display() {
         System.out.println("All Address books");
         for (AddressBook addressBook: addressBookService.getAll()) {
-            System.out.println("----------------------------------------");
             System.out.println("Address book " + addressBook.getName());
-            ContactRepository contactRepository = new ContactRepository();
-            contactRepository.addAll(addressBook.getContactList());
-            IContactService contactService = new ContactService(contactRepository);
-            ContactManager contactManager = new ContactManager(contactService);
-            contactManager.display();
             System.out.println("----------------------------------------");
         }
     }
@@ -100,27 +105,21 @@ public class AddressBookManager implements IAddressBookManager {
         Scanner scanner =  new Scanner(System.in);
         System.out.println("Enter address book name to delete");
         String name = scanner.next();
-        for (AddressBook addressBook : addressBookService.getAll()){
-            if(addressBook.getName().equals(name)){
-                addressBookService.delete(name);
-                System.out.println("Deleted Successfully");
-            }
-        }
-
+        if(addressBookService.delete(name))
+            System.out.println("Deleted Successfully");
     }
 
     @Override
     public void getContactsByCity() {
-
         Scanner scanner = new Scanner(System.in);
         for (AddressBook addressBook: addressBookService.getAll()) {
             System.out.println("----------------------------------------");
             System.out.println("Address book " + addressBook.getName());
             ContactRepository contactRepository = new ContactRepository();
-            contactRepository.addAll(addressBook.getContactList());
+            /*contactRepository.addAll(addressBook.getContactList());
             IContactService contactService = new ContactService(contactRepository);
-            ContactManager contactManager = new ContactManager(contactService);
-            contactManager.getContactByCity();
+            ContactController contactManager = new ContactController(contactService);
+            contactManager.getContactByCity();*/
         }
     }
 
@@ -130,11 +129,11 @@ public class AddressBookManager implements IAddressBookManager {
         for (AddressBook addressBook: addressBookService.getAll()) {
             System.out.println("----------------------------------------");
             System.out.println("Address book " + addressBook.getName());
-            ContactRepository contactRepository = new ContactRepository();
+            /*ContactRepository contactRepository = new ContactRepository();
             contactRepository.addAll(addressBook.getContactList());
             IContactService contactService = new ContactService(contactRepository);
-            ContactManager contactManager = new ContactManager(contactService);
-            contactManager.getContactsByState();
+            ContactController contactManager = new ContactController(contactService);
+            contactManager.getContactsByState();*/
         }
     }
 

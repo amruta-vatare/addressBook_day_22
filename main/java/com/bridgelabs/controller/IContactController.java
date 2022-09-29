@@ -1,16 +1,22 @@
-package com.bridgelabs.manager;
+package com.bridgelabs.controller;
 
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import java.io.IOException;
 
-public interface IContactManager {
+public interface IContactController {
     int chooseOptions();
+
     void invokeOption(int option);
+
     void displayOptions();
-    void add() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException;
-    void update();
-    void delete();
+
     void display();
+
+    void update();
+
+    void add() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException;
+
+    void delete();
 }

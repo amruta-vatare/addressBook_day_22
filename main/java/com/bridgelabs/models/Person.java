@@ -16,16 +16,16 @@ public class Person {
     @CsvBindByName(column = "state")
     private String state;
     @CsvBindByName(column = "zipCode")
-    private String zipCode;
+    private int zipCode;
     @CsvBindByName(column = "phoneNo")
-    private String phoneNumber;
+    private long phoneNumber;
     @CsvBindByName(column = "email_id")
     private String emailId;
     public Person(){
 
     }
 
-    public Person(String firstName, String lastName, String address, String city, String state, String zipCode, String phoneNumber, String emailId) {
+    public Person(String firstName, String lastName, String address, String city, String state, int zipCode, long phoneNumber, String emailId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -76,19 +76,17 @@ public class Person {
         this.state = state;
     }
 
-    public String getZipCode() {
+    public int getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
+    public void setZipCode(int zipCode) {this.zipCode = zipCode;}
 
-    public String getPhoneNumber() {
+    public long getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(long phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

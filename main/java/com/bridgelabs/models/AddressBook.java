@@ -1,11 +1,8 @@
 package com.bridgelabs.models;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-
 public class AddressBook {
     String name;
-    ArrayList<Person> contactList;
+    int type;
+
 
     public AddressBook() {
 
@@ -16,11 +13,12 @@ public class AddressBook {
     public void setName(String name) {
         this.name = name;
     }
-    public ArrayList<Person> getContactList() {
-        return contactList;
+
+    public int getType() {
+        return type;
     }
 
-    public void setContactList(ArrayList<Person> contactList) {
-        this.contactList = contactList;
+    public void setType(int type) {
+        this.type = type;
     }
 }

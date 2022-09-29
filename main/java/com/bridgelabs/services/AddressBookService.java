@@ -1,6 +1,7 @@
 package com.bridgelabs.services;
 
 import com.bridgelabs.models.AddressBook;
+import com.bridgelabs.models.AddressBookType;
 import com.bridgelabs.repository.AddressBookRepository;
 import java.util.List;
 
@@ -11,22 +12,27 @@ public class AddressBookService implements IAddressBookService {
     }
 
     @Override
-    public void add(AddressBook addressBook) {
-        addressBookRepository.add(addressBook);
+    public boolean add(AddressBook addressBook) {
+        int affectedRows = addressBookRepository.add(addressBook);
+        if(affectedRows != 0)
+            return true;
+        return false;
     }
     @Override
     public boolean delete(String name) {
-        for (AddressBook book: addressBookRepository) {
-            if (book.getName().equals(name)){
-                addressBookRepository.remove(book);
-                return true;
-            }
-        }
+        int affectedRows = addressBookRepository.delete(name);
+        if(affectedRows != 0)
+            return true;
         return false;
     }
     @Override
     public List<AddressBook> getAll()
     {
-        return addressBookRepository;
+        return addressBookRepository.getAll();
+    }
+
+    @Override
+    public List<AddressBookType> getTypes() {
+        return addressBookRepository.getTypes();
     }
 }

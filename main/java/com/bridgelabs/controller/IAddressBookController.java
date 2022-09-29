@@ -1,10 +1,6 @@
-package com.bridgelabs.manager;
+package com.bridgelabs.controller;
 
-import com.bridgelabs.models.Person;
-
-import java.util.List;
-
-public interface IAddressBookManager {
+public interface IAddressBookController {
     int chooseOptions();
     void invokeOption(int option);
     void displayOptions();

@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 public interface IContactService {
-    void add(Person person);
-    Person get(String name);
-    boolean delete(String name);
-    boolean edit(String name, Person person);
+    int add(Person person);
     List<Person> getAll();
-    Map<String, List<Person>> getContactByCity();
-    Map<String,Long> getContactsByState();
+    boolean update(String email_id, Person person);
+    boolean delete(String name);
+    List<Person> getContactByCity(String city);
+    /*
+
+    Map<String,Long> getContactsByState();*/
 }
