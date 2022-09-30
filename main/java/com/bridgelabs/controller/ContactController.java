@@ -47,6 +47,12 @@ public class ContactController implements IContactController {
             case 5:
                 getContactByCity();
                 break;
+            case 6:
+                getContactsByState();
+                break;
+            case 7:
+                getContactsCountByState();
+                break;
             default:
                 break;
         }
@@ -58,6 +64,8 @@ public class ContactController implements IContactController {
         System.out.println("3. Delete Contact");
         System.out.println("4. Display Contact");
         System.out.println("5. Display Contact by city");
+        System.out.println("6. Display Contact by state");
+        System.out.println("7. Display Total Contact by state");
         System.out.println("Press 0 to exit");
     }
     public String chooseAddressBook(){
@@ -162,27 +170,42 @@ public class ContactController implements IContactController {
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter city name");
         String city = sc.next();
-        List<Person> personListByCity = contactService.getContactByCity(city);
-        for (Person person : personListByCity)
+        List<Person> contactListByCity = contactService.getContactByCity(city);
+        List<Person> cites = contactListByCity.stream().sorted(Comparator.comparing(Person::getFirstName)).toList();
+        cites.forEach(System.out::println);
+        /*for (Person person : contactListByCity)
+        {
+            System.out.println(person.getFirstName()+" "+person.getLastName() );
+        }
+        System.out.println("--------------------------------------");*/
+    }
+
+    //UC10
+    public void getContactsByState(){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter state name");
+        String state = sc.next();
+        List<Person> ContactsByState = contactService.getContactsByState(state);
+        for (Person person : ContactsByState)
         {
             System.out.println(person.getFirstName()+" "+person.getLastName() );
         }
         System.out.println("--------------------------------------");
     }
-    /*
     //UC10
-    public void getContactsByState(){
-        Map<String, Long> ContactsByState = contactService.getContactsByState();
-        Set<Map.Entry<String, Long>> entrySet = ContactsByState.entrySet();
+    public void getContactsCountByState(){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the state name");
+        String state = sc.next();
+        Map<String, Long> mapStateCount = contactService.getContactsCountByState(state);
+        Set<Map.Entry<String, Long>> entrySet = mapStateCount.entrySet();
         for (Map.Entry<String, Long> entry : entrySet)
         {
             System.out.println("--------------------------------------");
-
             System.out.println("Contacts In "+entry.getKey() + " : "+entry.getValue());
-
             System.out.println("--------------------------------------");
         }
-    }*/
+    }
     //UC15
     /*private void processInputJsonFile(){
         Gson gson = new Gson();

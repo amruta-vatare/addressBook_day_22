@@ -17,7 +17,6 @@ public class ContactService implements IContactService {
 
         return contactRepository.add(addressBookName,person);
     }
-
     @Override
     public List<Person> getAll() {
         List<Person> contacts = contactRepository.getAll();
@@ -40,17 +39,25 @@ public class ContactService implements IContactService {
                 return true;
         return false;
     }
+    //UC8 Ability to retrieve entries sorted alphabetically by Person’s name for a given city
     @Override
     public List<Person> getContactByCity(String city){
-        List<Person> contactsByCity = contactRepository.getAll();
-        contactsByCity.stream().collect(Collectors.groupingBy(Person::getCity));
+        List<Person> contactsByCity = contactRepository.getContactByCity(city);
         return contactsByCity;
     }
-    /*
+
+    //UC6 Ability to Retrieve Person belonging to a City or State from the Address Book
     @Override
-    public Map<String, Long> getContactsByState() {
-        Map<String, Long> cityAndNoOfContacts =
-                contactRepository.stream().collect(Collectors.groupingBy(Person::getState, Collectors.counting()));
-        return cityAndNoOfContacts;
-    }*/
+    public List<Person> getContactsByState(String state) {
+        List<Person> contactsByState = contactRepository.getContactByState(state);
+        return contactsByState;
+    }
+
+    //UC7 Ability to understand the size of address book by State
+    @Override
+    public Map<String, Long> getContactsCountByState(String state) {
+         List<Person> cityAndNoOfContacts = contactRepository.getContactByState(state);
+        Map<String, Long> mapStateCount =  cityAndNoOfContacts.stream().collect(Collectors.groupingBy(Person::getState, Collectors.counting()));
+        return mapStateCount;
+    }
 }

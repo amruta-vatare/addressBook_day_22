@@ -2,7 +2,6 @@ package com.bridgelabs.repository;
 
 import com.bridgelabs.database.Mydatabase;
 import com.bridgelabs.database.MysqlDatabase;
-import com.bridgelabs.models.AddressBook;
 import com.bridgelabs.models.Person;
 
 import java.sql.Connection;
@@ -10,15 +9,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ContactRepository {
     Mydatabase mydatabase = new MysqlDatabase();
     Connection con = null;
-    ArrayList<Person> contacts;
-    Map<String,List<Person>> addsBookContacts = new HashMap<>();
     public ContactRepository() {
         con = mydatabase.createConnection();
     }
@@ -173,6 +168,58 @@ public class ContactRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Person> getContactByCity(String city) {
+        ArrayList<Person> contacts = new ArrayList<>();
+        String query = "select * from contact where city = ?";
+        try {
+            PreparedStatement st = con.prepareStatement(query);
+            st.setString(1,city);
+            ResultSet rs = st.executeQuery();
+            while(rs.next()){
+                Person contact = new Person();
+                System.out.println(rs.getInt("contact_id"));
+                contact.setFirstName(rs.getString("first_name"));
+                contact.setLastName(rs.getString("last_name"));
+                contact.setAddress(rs.getString("address"));
+                contact.setCity(rs.getString("city"));
+                contact.setState(rs.getString("state"));
+                contact.setZipCode(rs.getInt("zip_code"));
+                contact.setPhoneNumber(rs.getLong("phone_no"));
+                contact.setEmailId(rs.getString("email_id"));
+                contacts.add(contact);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return contacts;
+    }
+
+    public List<Person> getContactByState(String state) {
+        ArrayList<Person> contacts = new ArrayList<>();
+        String query = "select * from contact where state = ?";
+        try {
+            PreparedStatement st = con.prepareStatement(query);
+            st.setString(1,state);
+            ResultSet rs = st.executeQuery();
+            while(rs.next()){
+                Person contact = new Person();
+                System.out.println(rs.getInt("contact_id"));
+                contact.setFirstName(rs.getString("first_name"));
+                contact.setLastName(rs.getString("last_name"));
+                contact.setAddress(rs.getString("address"));
+                contact.setCity(rs.getString("city"));
+                contact.setState(rs.getString("state"));
+                contact.setZipCode(rs.getInt("zip_code"));
+                contact.setPhoneNumber(rs.getLong("phone_no"));
+                contact.setEmailId(rs.getString("email_id"));
+                contacts.add(contact);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return contacts;
     }
     /*public List<Person> getContactByCity(String city) {
         List<Person> contacts = new ArrayList<>();

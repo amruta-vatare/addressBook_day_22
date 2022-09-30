@@ -11,7 +11,10 @@ public interface IContactService {
     boolean update(String email_id, Person person);
     boolean delete(String name);
     List<Person> getContactByCity(String city);
+    List<Person> getContactsByState(String state);
+
+    Map<String, Long> getContactsCountByState(String state);
     /*
 
-    Map<String,Long> getContactsByState();*/
+    ;*/
 }
