@@ -11,10 +11,10 @@ public class AddressBookMain {
         IContactService service = new ContactService(contactRepository);
         IContactController controller = new ContactController(service);
         int selectedOption;
-        do{
+        do {
             controller.displayOptions();
             selectedOption = controller.chooseOptions();
             controller.invokeOption(selectedOption);
-        }while (selectedOption !=0);
+        } while (selectedOption != 0);
     }
 }

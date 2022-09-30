@@ -1,4 +1,5 @@
 package com.bridgelabs.models;
+
 public class AddressBook {
     String name;
     int type;
@@ -7,9 +8,11 @@ public class AddressBook {
     public AddressBook() {
 
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }

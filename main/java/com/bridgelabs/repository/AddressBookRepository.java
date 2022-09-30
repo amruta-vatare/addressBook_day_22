@@ -7,31 +7,36 @@ import com.bridgelabs.models.AddressBookType;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddressBookRepository {
-    ArrayList<AddressBook> bookArrayList= new ArrayList<>();
+    ArrayList<AddressBook> bookArrayList = new ArrayList<>();
     Connection con;
     Mydatabase mydatabase = new MysqlDatabase();
-    public AddressBookRepository(){
+
+    public AddressBookRepository() {
         con = mydatabase.createConnection();
     }
-    public int add(AddressBook addressBook){
+
+    public int add(AddressBook addressBook) {
         int res = 0;
         try {
             String insertQuery = "insert into address_book(address_book_name,address_book_type) values(?,?)";
             PreparedStatement st = con.prepareStatement(insertQuery);
-            st.setString(1,addressBook.getName());
-            st.setInt(2,addressBook.getType());
+            st.setString(1, addressBook.getName());
+            st.setInt(2, addressBook.getType());
             res = st.executeUpdate();
-            System.out.println(res+" are affected");
+            System.out.println(res + " are affected");
             return res;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
     }
-    public int delete(String name){
+
+    public int delete(String name) {
         int id = get(name);
         int affectedRow = 0;
         try {
@@ -46,6 +51,7 @@ public class AddressBookRepository {
         return affectedRow;
 
     }
+
     public int get(String name) {
         int id = 0;
         try {
@@ -63,12 +69,13 @@ public class AddressBookRepository {
         }
         return id;
     }
-    public List<AddressBook> getAll(){
+
+    public List<AddressBook> getAll() {
         try {
             String getAllQuery = "select * from address_book";
             PreparedStatement st = con.prepareStatement(getAllQuery);
             ResultSet resultSet = st.executeQuery();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 AddressBook book = new AddressBook();
                 book.setName(resultSet.getString("address_book_name"));
                 book.setType(resultSet.getInt("address_book_type"));
@@ -80,14 +87,15 @@ public class AddressBookRepository {
         }
         return bookArrayList;
     }
-    public List<AddressBookType> getTypes(){
+
+    public List<AddressBookType> getTypes() {
         List<AddressBookType> typeList = new ArrayList<>();
         try {
             String getAllQuery = "select * from address_book_type";
             PreparedStatement st = con.prepareStatement(getAllQuery);
             ResultSet resultSet = st.executeQuery();
-            if(resultSet != null){
-                while (resultSet.next()){
+            if (resultSet != null) {
+                while (resultSet.next()) {
                     System.out.println(resultSet.getString("type_name"));
                     AddressBookType type = new AddressBookType();
                     type.setType_name(resultSet.getString("type_name"));
@@ -97,7 +105,26 @@ public class AddressBookRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return  typeList;
+        return typeList;
     }
 
+    public Map<AddressBook, String> getAllWithType() {
+        Map<AddressBook,String> bookTypeMap = new HashMap<>();
+        try {
+            String query = "SELECT * FROM address_book b INNER JOIN address_book_type t ON t.book_type_id = b.address_book_type";
+            PreparedStatement st = con.prepareStatement(query);
+            ResultSet resultSet = st.executeQuery();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    AddressBook book = new AddressBook();
+                    book.setName(resultSet.getString("address_book_name"));
+                    String type = resultSet.getString("type_name");
+                    bookTypeMap.put(book,type);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bookTypeMap;
+    }
 }
