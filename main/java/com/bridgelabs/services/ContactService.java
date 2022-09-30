@@ -13,8 +13,9 @@ public class ContactService implements IContactService {
     }
 
     @Override
-    public int add(Person person) {
-        return contactRepository.add(person);
+    public int add(String addressBookName,Person person) {
+
+        return contactRepository.add(addressBookName,person);
     }
 
     @Override

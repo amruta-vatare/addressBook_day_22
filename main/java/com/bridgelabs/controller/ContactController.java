@@ -1,5 +1,8 @@
 package com.bridgelabs.controller;
-
+import com.bridgelabs.repository.*;
+import com.bridgelabs.services.*;
+import com.bridgelabs.controller.*;
+import com.bridgelabs.models.*;
 import com.bridgelabs.models.Person;
 import com.bridgelabs.services.IContactService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,6 +60,32 @@ public class ContactController implements IContactController {
         System.out.println("5. Display Contact by city");
         System.out.println("Press 0 to exit");
     }
+    public String chooseAddressBook(){
+        Scanner sc = new Scanner(System.in);
+        String name = null;
+        AddressBookRepository addressBookRepository = new AddressBookRepository();
+        IAddressBookService addressBookService = new AddressBookService(addressBookRepository);
+        IAddressBookController addressBookController= new AddressBookController(addressBookService);
+        System.out.println("1:Add to existing address book");
+        System.out.println("2:Create new address book");
+        int op = sc.nextInt();
+        switch (op){
+            case 1:
+                addressBookController.display();
+                System.out.println("Enter name of address book");
+                name = sc.next();
+                return name;
+            case 2:
+                addressBookController.add();
+                System.out.println("Enter name of address book");
+                name = sc.next();
+                return name;
+            default:
+                System.out.println("You have to choose correct option!");
+                break;
+        }
+        return name;
+    }
     @Override
     public void add() {
         Scanner scanner = new Scanner(System.in);
@@ -65,7 +94,9 @@ public class ContactController implements IContactController {
         for(int i = 1;i<=count;i++){
             System.out.println("Enter contact "+i+" details");
             Person person =  getContactDetails();
-            int res = contactService.add(person);
+            String addressBookName = chooseAddressBook();
+            System.out.println(addressBookName);
+            int res = contactService.add(addressBookName,person);
             //processOutputCSVFile();
             //processOutputJsonFile();
             if(res != 0)

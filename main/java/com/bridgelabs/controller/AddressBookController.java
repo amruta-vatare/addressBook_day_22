@@ -66,10 +66,6 @@ public class AddressBookController implements IAddressBookController {
     @Override
     public void add() {
         AddressBook addressBook = new AddressBook();
-        ContactRepository contactRepository = new ContactRepository();
-        IContactService contactService = new ContactService(contactRepository);
-        ContactController contactController = new ContactController(contactService);
-
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter address book name");
         String addressBookName = scanner.next();
@@ -80,13 +76,6 @@ public class AddressBookController implements IAddressBookController {
         addressBook.setType(type);
         if(addressBookService.add(addressBook)){
             System.out.println("Address book " + addressBook.getName() + " added successfully");
-            System.out.println("Please choose option below to manage address book '" + addressBook.getName() + "'");
-            int selectedOption;
-            do {
-                contactController.displayOptions();
-                selectedOption = contactController.chooseOptions();
-                contactController.invokeOption(selectedOption);
-            }while(selectedOption !=0);
             System.out.println("Successfully exited the address book " + addressBook.getName());
         }
     }

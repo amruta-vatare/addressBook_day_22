@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface IContactService {
-    int add(Person person);
+    int add(String addressBookName, Person person);
     List<Person> getAll();
     boolean update(String email_id, Person person);
     boolean delete(String name);

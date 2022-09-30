@@ -2,6 +2,7 @@ package com.bridgelabs.repository;
 
 import com.bridgelabs.database.Mydatabase;
 import com.bridgelabs.database.MysqlDatabase;
+import com.bridgelabs.models.AddressBook;
 import com.bridgelabs.models.Person;
 
 import java.sql.Connection;
@@ -9,16 +10,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ContactRepository {
     Mydatabase mydatabase = new MysqlDatabase();
     Connection con = null;
+    ArrayList<Person> contacts;
+    Map<String,List<Person>> addsBookContacts = new HashMap<>();
     public ContactRepository() {
         con = mydatabase.createConnection();
     }
 
-    public int add(Person person) {
+    public int add(String addressBookName,Person person) {
         int res = 0;
         try {
             String insertQuery = "insert into contact(first_name ,last_name ,address ,city ,state ,zip_code ,phone_no ,email_id) values(?,?,?,?,?,?,?,?)";
@@ -33,11 +38,29 @@ public class ContactRepository {
             st.setString(8, person.getEmailId());
             res = st.executeUpdate();
             System.out.println(res + " are affected");
+            addToAddressBook(addressBookName,person.getEmailId());
             return res;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
+    }
+
+    private void addToAddressBook(String addressBookName,String email) {
+        String insertQuery = "insert into address_book_contacts_mapping(adds_book_id,contact_id) values((select adds_book_id from address_book where address_book_name = ?)  ,(select contact_id from contact where email_id = ?))";
+        PreparedStatement st = null;
+        int res = 0;
+        try {
+            st = con.prepareStatement(insertQuery);
+            st.setString(1, addressBookName);
+            st.setString(2,email);
+            res = st.executeUpdate();
+            if(res!=0){
+                System.out.println("Successfully added to address Book");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<Person> getAll() {
@@ -59,6 +82,7 @@ public class ContactRepository {
                 contact.setEmailId(resultSet.getString("email_id"));
                 contacts.add(contact);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -123,6 +147,33 @@ public class ContactRepository {
         return affectedRow;
     }
 
+    public void getAllWithAddressBookAndType() {
+        ResultSet rs = null;
+        String query = "SELECT * FROM contact b" +
+                "  INNER JOIN address_book_contacts_mapping a ON a.contact_id = b.contact_id " +
+                "  INNER JOIN address_book c ON c.adds_book_id = a.adds_book_id" +
+                "  INNER JOIN address_book_type t ON t.book_type_id = c.address_book_type";
+        PreparedStatement st = null;
+        try {
+            st = con.prepareStatement(query);
+            rs = st.executeQuery();
+            System.out.println("first_name\tlast_name\tcity\tstate\tphone_no\temail_id\taddress_book_name\ttype_name");
+            System.out.println("-----------------------------------------------------------------------------------------------");
+            while (rs.next()) {
+                System.out.println();
+                System.out.print(rs.getString("first_name")+"\t\t");
+                System.out.print(rs.getString("last_name")+"\t\t");
+                System.out.print(rs.getString("city")+"\t\t");
+                System.out.print(rs.getString("state")+"\t\t");
+                System.out.print(rs.getLong("phone_no")+"\t\t");
+                System.out.print(rs.getString("email_id")+"\t\t");
+                System.out.print(rs.getString("address_book_name")+"\t\t");
+                System.out.print(rs.getString("type_name")+"\t\t");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     /*public List<Person> getContactByCity(String city) {
         List<Person> contacts = new ArrayList<>();
         try {

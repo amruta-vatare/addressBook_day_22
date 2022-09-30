@@ -1,21 +1,20 @@
-import com.bridgelabs.controller.AddressBookController;
-import com.bridgelabs.controller.IAddressBookController;
-import com.bridgelabs.repository.AddressBookRepository;
-import com.bridgelabs.services.AddressBookService;
-import com.bridgelabs.services.IAddressBookService;
+import com.bridgelabs.controller.ContactController;
+import com.bridgelabs.controller.IContactController;
+import com.bridgelabs.repository.ContactRepository;
+import com.bridgelabs.services.ContactService;
+import com.bridgelabs.services.IContactService;
 
 public class AddressBookMain {
-    static AddressBookRepository addressBookRepository = new AddressBookRepository();
+    static ContactRepository contactRepository = new ContactRepository();
+
     public static void main(String[] args) {
-
-        IAddressBookService addressBookService = new AddressBookService(addressBookRepository);
-        IAddressBookController addressBookController= new AddressBookController(addressBookService);
-
+        IContactService service = new ContactService(contactRepository);
+        IContactController controller = new ContactController(service);
         int selectedOption;
-        do {
-            addressBookController.displayOptions();
-            selectedOption = addressBookController.chooseOptions();
-            addressBookController.invokeOption(selectedOption);
-        }while(selectedOption !=0);
+        do{
+            controller.displayOptions();
+            selectedOption = controller.chooseOptions();
+            controller.invokeOption(selectedOption);
+        }while (selectedOption !=0);
     }
 }
