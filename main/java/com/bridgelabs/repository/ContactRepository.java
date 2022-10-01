@@ -18,7 +18,7 @@ public class ContactRepository {
         con = mydatabase.createConnection();
     }
 
-    public int add(String addressBookName,Person person) {
+    public int add(int selectedAddressBooks [],Person person) {
         int res = 0;
         try {
             String insertQuery = "insert into contact(first_name ,last_name ,address ,city ,state ,zip_code ,phone_no ,email_id) values(?,?,?,?,?,?,?,?)";
@@ -33,7 +33,7 @@ public class ContactRepository {
             st.setString(8, person.getEmailId());
             res = st.executeUpdate();
             System.out.println(res + " are affected");
-            addToAddressBook(addressBookName,person.getEmailId());
+            addToAddressBook(selectedAddressBooks,person.getEmailId());
             return res;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,21 +41,25 @@ public class ContactRepository {
         return res;
     }
 
-    private void addToAddressBook(String addressBookName,String email) {
-        String insertQuery = "insert into address_book_contacts_mapping(adds_book_id,contact_id) values((select adds_book_id from address_book where address_book_name = ?)  ,(select contact_id from contact where email_id = ?))";
-        PreparedStatement st = null;
-        int res = 0;
-        try {
-            st = con.prepareStatement(insertQuery);
-            st.setString(1, addressBookName);
-            st.setString(2,email);
-            res = st.executeUpdate();
-            if(res!=0){
-                System.out.println("Successfully added to address Book");
+    private void addToAddressBook(int selectedAddressBooks [],String email) {
+        for(int i = 0;i<selectedAddressBooks.length;i++){
+            int addressBookId = selectedAddressBooks[i];
+            String insertQuery = "insert into address_book_contacts_mapping(adds_book_id,contact_id) values((select adds_book_id from address_book where adds_book_id = ? ) ,(select contact_id from contact where email_id = ?))";
+            PreparedStatement st = null;
+            int res = 0;
+            try {
+                st = con.prepareStatement(insertQuery);
+                st.setInt(1, addressBookId);
+                st.setString(2,email);
+                res = st.executeUpdate();
+                if(res!=0){
+                    System.out.println("Successfully added to address Book");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+
     }
 
     public List<Person> getAll() {
@@ -66,7 +70,6 @@ public class ContactRepository {
             ResultSet resultSet = st.executeQuery();
             while (resultSet.next()) {
                 Person contact = new Person();
-                System.out.println(resultSet.getInt("contact_id"));
                 contact.setFirstName(resultSet.getString("first_name"));
                 contact.setLastName(resultSet.getString("last_name"));
                 contact.setAddress(resultSet.getString("address"));
@@ -179,7 +182,6 @@ public class ContactRepository {
             ResultSet rs = st.executeQuery();
             while(rs.next()){
                 Person contact = new Person();
-                System.out.println(rs.getInt("contact_id"));
                 contact.setFirstName(rs.getString("first_name"));
                 contact.setLastName(rs.getString("last_name"));
                 contact.setAddress(rs.getString("address"));
@@ -205,7 +207,6 @@ public class ContactRepository {
             ResultSet rs = st.executeQuery();
             while(rs.next()){
                 Person contact = new Person();
-                System.out.println(rs.getInt("contact_id"));
                 contact.setFirstName(rs.getString("first_name"));
                 contact.setLastName(rs.getString("last_name"));
                 contact.setAddress(rs.getString("address"));
@@ -221,28 +222,4 @@ public class ContactRepository {
         }
         return contacts;
     }
-    /*public List<Person> getContactByCity(String city) {
-        List<Person> contacts = new ArrayList<>();
-        try {
-            String getAllQuery = "select * from contact";
-            PreparedStatement st = con.prepareStatement(getAllQuery);
-            ResultSet resultSet = st.executeQuery();
-            while (resultSet.next()) {
-                Person contact = new Person();
-                System.out.println(resultSet.getInt("contact_id"));
-                contact.setFirstName(resultSet.getString("first_name"));
-                contact.setLastName(resultSet.getString("last_name"));
-                contact.setAddress(resultSet.getString("address"));
-                contact.setCity(resultSet.getString("city"));
-                contact.setState(resultSet.getString("state"));
-                contact.setZipCode(resultSet.getInt("zip_code"));
-                contact.setPhoneNumber(resultSet.getLong("phone_no"));
-                contact.setEmailId(resultSet.getString("email_id"));
-                contacts.add(contact);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return contacts;
-    }*/
 }

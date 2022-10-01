@@ -18,7 +18,7 @@ public class MysqlDatabase implements Mydatabase {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(url, username, password);
             if (con != null) {
-                System.out.println("Connection Established successfully");
+               // System.out.println("Connection Established successfully");
             }
         } catch (Exception e) {
             e.printStackTrace();

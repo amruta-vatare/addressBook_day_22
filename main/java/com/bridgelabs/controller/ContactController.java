@@ -23,6 +23,9 @@ import java.util.stream.Collectors;
 public class ContactController implements IContactController {
     IContactService contactService;
     List<Person> personsContact;
+    AddressBookRepository addressBookRepository = new AddressBookRepository();
+    IAddressBookService addressBookService = new AddressBookService(addressBookRepository);
+    IAddressBookController addressBookController = new AddressBookController(addressBookService);
 
     public ContactController(IContactService contactService) {
         this.contactService = contactService;
@@ -77,31 +80,40 @@ public class ContactController implements IContactController {
         System.out.println("Press 0 to exit");
     }
 
-    public String chooseAddressBook() {
+    public int[] chooseAddressBook() {
         Scanner sc = new Scanner(System.in);
         String name = null;
-        AddressBookRepository addressBookRepository = new AddressBookRepository();
-        IAddressBookService addressBookService = new AddressBookService(addressBookRepository);
-        IAddressBookController addressBookController = new AddressBookController(addressBookService);
+        int addsNo[] = new int[5];
         System.out.println("1:Add to existing address book");
         System.out.println("2:Create new address book");
         int op = sc.nextInt();
         switch (op) {
             case 1:
-                addressBookController.display();
-                System.out.println("Enter name of address book");
-                name = sc.next();
-                return name;
+                addsNo = addToAddressBook();
+                break;
             case 2:
                 addressBookController.add();
-                System.out.println("Enter name of address book");
-                name = sc.next();
-                return name;
+                addsNo = addToAddressBook();
+                break;
             default:
                 System.out.println("You have to choose correct option!");
                 break;
         }
-        return name;
+        return addsNo;
+    }
+    public int[] addToAddressBook(){
+        int no [];
+        Scanner sc = new Scanner(System.in);
+        addressBookController.display();
+        System.out.println("Enter number of address book you want select");
+        int noOfBooks = sc.nextInt();
+        no = new int[noOfBooks];
+        for (int i = 0 ;i<noOfBooks;i++){
+            System.out.println("Enter address book no");
+            no[i]= sc.nextInt();
+            System.out.println(no[i]);
+        }
+        return no;
     }
 
     @Override
@@ -112,9 +124,9 @@ public class ContactController implements IContactController {
         for (int i = 1; i <= count; i++) {
             System.out.println("Enter contact " + i + " details");
             Person person = getContactDetails();
-            String addressBookName = chooseAddressBook();
-            System.out.println(addressBookName);
-            int res = contactService.add(addressBookName, person);
+            int  selectedAddressBooks[] = chooseAddressBook();
+            System.out.println(selectedAddressBooks);
+            int res = contactService.add(selectedAddressBooks, person);
             //processOutputCSVFile();
             //processOutputJsonFile();
             if (res != 0)
@@ -125,9 +137,10 @@ public class ContactController implements IContactController {
 
     @Override
     public void display() {
-        System.out.println("All Contacts");
+        System.out.println("First_Name\t Last_Name \t Address \t City \t State \t Zip code \t Phone No \t Email_Id");
+        System.out.println("--------------------------------------------------------------------------------------------------");
         for (Person person : contactService.getAll()) {
-            System.out.println(person.toString());
+            System.out.println(person.getFirstName()+"\t"+person.getLastName()+"\t"+person.getAddress()+"\t"+person.getCity()+"\t"+person.getState()+"\t"+person.getZipCode()+"\t"+person.getPhoneNumber()+"\t"+person.getEmailId());
         }
         /*System.out.println("DisplayFrom CSV");
         List<Person> personByCSVFile = processInputCSVFile();
@@ -186,7 +199,11 @@ public class ContactController implements IContactController {
         String city = sc.next();
         List<Person> contactListByCity = contactService.getContactByCity(city);
         List<Person> cites = contactListByCity.stream().sorted(Comparator.comparing(Person::getFirstName)).toList();
-        cites.forEach(System.out::println);
+        System.out.println("First_Name\t Last_Name \t Address \t City \t State \t Zip code \t Phone No \t Email_Id");
+        System.out.println("--------------------------------------------------------------------------------------------------");
+        for (Person person : cites) {
+            System.out.println(person.getFirstName()+"\t\t"+person.getLastName()+"\t\t"+person.getAddress()+"\t\t"+person.getCity()+"\t\t"+person.getState()+"\t\t"+person.getZipCode()+"\t\t"+person.getPhoneNumber()+"\t\t"+person.getEmailId());
+        }
     }
 
     //UC10
@@ -195,8 +212,10 @@ public class ContactController implements IContactController {
         System.out.println("Enter state name");
         String state = sc.next();
         List<Person> ContactsByState = contactService.getContactsByState(state);
+        System.out.println("First_Name\t Last_Name \t Address \t City \t State \t Zip code \t Phone No \t Email_Id");
+        System.out.println("--------------------------------------------------------------------------------------------------");
         for (Person person : ContactsByState) {
-            System.out.println(person.getFirstName() + " " + person.getLastName());
+            System.out.println(person.getFirstName()+"\t"+person.getLastName()+"\t"+person.getAddress()+"\t"+person.getCity()+"\t"+person.getState()+"\t"+person.getZipCode()+"\t"+person.getPhoneNumber()+"\t"+person.getEmailId());
         }
         System.out.println("--------------------------------------");
     }
@@ -214,6 +233,7 @@ public class ContactController implements IContactController {
             System.out.println("--------------------------------------");
         }
     }
+
     //UC15
     /*private void processInputJsonFile(){
         Gson gson = new Gson();

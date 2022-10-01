@@ -77,6 +77,7 @@ public class AddressBookRepository {
             ResultSet resultSet = st.executeQuery();
             while (resultSet.next()) {
                 AddressBook book = new AddressBook();
+                book.setAddress_book_id(resultSet.getInt("adds_book_id"));
                 book.setName(resultSet.getString("address_book_name"));
                 book.setType(resultSet.getInt("address_book_type"));
                 bookArrayList.add(book);
@@ -98,6 +99,7 @@ public class AddressBookRepository {
                 while (resultSet.next()) {
                     System.out.println(resultSet.getString("type_name"));
                     AddressBookType type = new AddressBookType();
+                    type.setType_id(resultSet.getInt("book_type_id"));
                     type.setType_name(resultSet.getString("type_name"));
                     typeList.add(type);
                 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface IContactService {
-    int add(String addressBookName, Person person);
+    int add(int selectedAddressBooks [], Person person);
 
     List<Person> getAll();
 

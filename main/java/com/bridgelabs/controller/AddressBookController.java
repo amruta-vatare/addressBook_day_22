@@ -56,7 +56,7 @@ public class AddressBookController implements IAddressBookController {
     public void chooseType() {
         List<AddressBookType> types = addressBookService.getTypes();
         for (int i = 0; i < types.size(); i++) {
-            System.out.println(i + 1 + " " + types.get(i).getType_name());
+            System.out.println(types.get(i).getType_id() +" : " + types.get(i).getType_name());
         }
     }
 
@@ -79,11 +79,14 @@ public class AddressBookController implements IAddressBookController {
 
     @Override
     public void display() {
-        System.out.println("All Address books");
-        for (AddressBook addressBook : addressBookService.getAll()) {
-            System.out.println("Address book " + addressBook.getName());
-            System.out.println("----------------------------------------");
+        List<AddressBook> books = addressBookService.getAll();
+        System.out.println(" \tAddress books ");
+        System.out.println("------------------------------------------");
+        for (AddressBook addressBook : books) {
+            System.out.println(addressBook.getAddress_book_id()+" : " + addressBook.getName());
         }
+        System.out.println("------------------------------------------");
+        books = null;
     }
 
     @Override
